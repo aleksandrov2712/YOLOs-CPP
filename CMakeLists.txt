@@ -13,6 +13,9 @@ if(MSVC)
     include(InstallRequiredSystemLibraries)
 endif()
 
+# Подключение vcpkg
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+
 # Проверка и установка путей для OpenCV
 if(NOT OpenCV_DIR)
     set(OpenCV_DIR "C:/opencv/build/x64/vc16/lib" CACHE PATH "Path to OpenCV build directory")
@@ -42,6 +45,9 @@ if(NOT OpenCV_FOUND)
     message(FATAL_ERROR "OpenCV not found. Please check the path: ${OpenCV_DIR}")
 endif()
 
+# Поиск nlohmann_json
+find_package(nlohmann_json REQUIRED)
+
 # Добавление директории с заголовочными файлами
 include_directories("include/")
 
@@ -59,6 +65,7 @@ target_include_directories(camera_inference
 target_link_libraries(camera_inference 
     PRIVATE 
     ${OpenCV_LIBS}
+    nlohmann_json::nlohmann_json
 )
 
 if(MSVC)
@@ -120,9 +127,16 @@ if(MSVC)
     # Копирование файлов моделей
     add_custom_command(TARGET camera_inference POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_SOURCE_DIR}/models/yolov8n-seg.onnx"
+            "${CMAKE_SOURCE_DIR}/models/yolo10n.onnx"
             "${CMAKE_SOURCE_DIR}/models/coco.names"
             $<TARGET_FILE_DIR:camera_inference>/models/
+    )
+    
+    # Копирование config.json
+    add_custom_command(TARGET camera_inference POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/config.json"
+            $<TARGET_FILE_DIR:camera_inference>
     )
 endif()
 

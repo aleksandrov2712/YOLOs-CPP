@@ -1,0 +1,10 @@
+{
+  "ffmpeg_path": "/ffmpeg/bin/ffmpeg.exe",
+  "rtsp_url": "rtsp://admin:123456@31.173.160.171:1602/stream2",
+  "width": 640,
+  "height": 480,
+  "model_path": "/models/yolo10n.onnx",
+  "labels_path": "/models/coco.names",
+  "max_queue_size": 8,
+  "batch_size": 2
+}

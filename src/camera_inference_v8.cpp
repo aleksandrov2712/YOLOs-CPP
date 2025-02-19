@@ -4,6 +4,8 @@
 #include <atomic>
 #include <string>
 #include <Windows.h>
+#include <nlohmann/json.hpp>
+#include <fstream>
 
 #include "tools/BoundedThreadSafeQueue.hpp"
 #include "tools/FFmpegPipe.hpp"
@@ -23,16 +25,31 @@ static std::string getExecutablePath() {
     return lastSlash != std::string::npos ? path.substr(0, lastSlash) : path;
 }
 
+// Загрузка конфигурации из JSON файла
+nlohmann::json loadConfig(const std::string& configPath) {
+    std::ifstream configFile(configPath);
+    if (!configFile.is_open()) {
+        throw std::runtime_error("Could not open config file: " + configPath);
+    }
+    nlohmann::json config;
+    configFile >> config;
+    return config;
+}
+
 int main() {
     try {
-        const std::string ffmpegPath = "C:/PROGRA~2/ffmpeg/bin/ffmpeg.exe";
-        const std::string rtspUrl = "rtsp://admin:123456@31.173.160.171:1602/stream2";
-        const int width = 640;
-        const int height = 480;
+        // Load configuration from JSON file
+        const std::string configPath = "config.json";
+        nlohmann::json config = loadConfig(configPath);
 
+        // Fetch configuration parameters
         const std::string exePath = getExecutablePath();
-        const std::string modelPath = exePath + "\\models\\yolo10n.onnx";
-        const std::string labelsPath = exePath + "\\models\\coco.names";
+        const std::string ffmpegPath = exePath + config["ffmpeg_path"].get<std::string>();
+        const std::string rtspUrl = config["rtsp_url"];
+        const int width = config["width"];
+        const int height = config["height"];
+        const std::string modelPath = exePath + config["model_path"].get<std::string>();
+        const std::string labelsPath = exePath + config["labels_path"].get<std::string>();
 
         std::cout << "Initializing YOLO detector..." << std::endl;
         YOLO10Detector detector(modelPath, labelsPath, false);
@@ -43,7 +60,7 @@ int main() {
         cv::namedWindow("RTSP Stream", cv::WINDOW_NORMAL);
         cv::resizeWindow("RTSP Stream", width, height);
 
-        const size_t maxQueueSize = 8;
+        const size_t maxQueueSize = config["max_queue_size"];
         BoundedThreadSafeQueue<cv::Mat> frameQueue(maxQueueSize);
         BoundedThreadSafeQueue<std::pair<cv::Mat, std::vector<Detection>>>
             processedQueue(maxQueueSize);
@@ -67,7 +84,7 @@ int main() {
 
         // Поток обработки кадров
         std::thread consumer([&]() {
-            const size_t batchSize = 2;
+            const size_t batchSize = config["batch_size"];
             std::vector<cv::Mat> frameBatch;
             frameBatch.reserve(batchSize);
 
