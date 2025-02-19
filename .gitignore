@@ -1,0 +1,89 @@
+# Папки сборки
+/build/
+/out/
+x64/
+Debug/
+Release/
+
+# Visual Studio
+.vs/
+*.vsidx
+*.sqlite
+*.db
+*.db-shm
+*.db-wal
+*.opendb
+*.ipch
+*.suo
+*.user
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+*.cmake
+!CMakeLists.txt
+
+# Бинарные файлы
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.obj
+*.o
+*.a
+*.so
+
+# Временные файлы Visual Studio
+*.log
+*.tlog
+*.lastbuildstate
+*.idb
+*.manifest
+*.res
+
+# DLL редиста
+/redist/
+
+# Файлы ONNX Runtime (могут быть большими)
+*.onnx
+
+# Артефакты OpenCV
+opencv_world*.dll
+opencv_videoio_ffmpeg*.dll
+
+# Временные файлы в любых папках
+*.tmp
+*.temp
+*~
+
+# Специфичные для проекта исключения
+/ffmpeg/bin/
+/ffmpeg/doc/
+
+# Файлы системных библиотек
+vcruntime*.dll
+msvcp*.dll
+concrt*.dll
+
+# Кэш и временные файлы
+*.cache
+*.bak
+
+# Файлы настроек IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Системные файлы
+.DS_Store
+Thumbs.db

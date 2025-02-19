@@ -1,0 +1,11 @@
+{
+    "cmake.configureSettings": {
+        "OpenCV_DIR": "C:/opencv/build/x64/vc16/lib",
+        "ONNXRUNTIME_DIR": "${workspaceFolder}/onnxruntime"
+    },
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.generator": "Visual Studio 17 2022",
+    "cmake.preferredGenerators": [
+        "Visual Studio 17 2022"
+    ]
+}
